@@ -220,38 +220,35 @@ function drawAtlas() {
   defs.appendChild(filter);
   svg.insertBefore(defs, svg.firstChild);
 
-  drawLeafLabels(records);
+  drawLeafMarkers(records);
 }
 
-function drawLeafLabels(records) {
+function drawLeafMarkers(records) {
   const rim = el("g");
   svg.appendChild(rim);
   const sorted = [...records].sort((a, b) => teaOrder.indexOf(a["茶类"]) - teaOrder.indexOf(b["茶类"]) || a["品种级茶名"].localeCompare(b["品种级茶名"], "zh"));
   const start = -52;
   const span = 286;
-  const showLabels = state.selectedTea !== "全部";
-  const labelEvery = Math.max(1, Math.ceil(sorted.length / 34));
   sorted.forEach((r, i) => {
     const angle = start + (i / Math.max(1, sorted.length - 1)) * span;
     const [x1, y1] = polar(530, angle);
-    const [x2, y2] = polar(585, angle);
+    const [x2, y2] = polar(572, angle);
     rim.appendChild(el("line", { class: "leaf-tick", x1, y1, x2, y2 }));
-    if (!showLabels || i % labelEvery !== 0) return;
-    const [tx, ty] = polar(595, angle);
-    const rotate = angle;
-    const anchor = angle > 0 && angle < 180 ? "start" : "end";
-    const text = r["品种级茶名"].length > 7 ? `${r["品种级茶名"].slice(0, 7)}…` : r["品种级茶名"];
-    const label = el("text", {
-      class: "leaf-label",
-      x: tx,
-      y: ty,
-      transform: `rotate(${rotate} ${tx} ${ty})`,
-      "text-anchor": anchor,
-      text,
+    const [cx, cy] = polar(586, angle);
+    const marker = el("circle", {
+      class: "leaf-marker",
+      cx,
+      cy,
+      r: state.selectedTea === "全部" ? 3.4 : 4.8,
+      fill: r.color,
     });
-    label.addEventListener("mousemove", (e) => showTip(e, r["品种级茶名"], `${r["茶类"]} · ${r["省级"]}${r["市级"]}`));
-    label.addEventListener("mouseleave", hideTip);
-    rim.appendChild(label);
+    marker.addEventListener("mousemove", (e) => showTip(
+      e,
+      r["品种级茶名"],
+      `${r["茶类"]} · ${r["子类"]}<br>${r["最小产地(县/镇/村)"]}<br>${r["四大茶区"]}`,
+    ));
+    marker.addEventListener("mouseleave", hideTip);
+    rim.appendChild(marker);
   });
 }
 
