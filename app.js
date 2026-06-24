@@ -229,11 +229,14 @@ function drawLeafLabels(records) {
   const sorted = [...records].sort((a, b) => teaOrder.indexOf(a["茶类"]) - teaOrder.indexOf(b["茶类"]) || a["品种级茶名"].localeCompare(b["品种级茶名"], "zh"));
   const start = -52;
   const span = 286;
+  const showLabels = state.selectedTea !== "全部";
+  const labelEvery = Math.max(1, Math.ceil(sorted.length / 34));
   sorted.forEach((r, i) => {
     const angle = start + (i / Math.max(1, sorted.length - 1)) * span;
     const [x1, y1] = polar(530, angle);
     const [x2, y2] = polar(585, angle);
     rim.appendChild(el("line", { class: "leaf-tick", x1, y1, x2, y2 }));
+    if (!showLabels || i % labelEvery !== 0) return;
     const [tx, ty] = polar(595, angle);
     const rotate = angle;
     const anchor = angle > 0 && angle < 180 ? "start" : "end";
