@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>茗香万象：中国茶叶分类与产地地图</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero-stage">
+        <header class="site-header">
+          <div>
+            <p class="kicker">Chinese Tea Atlas</p>
+            <h1>茗香万象：中国茶叶分类与产地地图</h1>
+          </div>
+          <div class="metric-strip" aria-label="数据概览">
+            <div><strong id="metric-total">155</strong><span>品种记录</span></div>
+            <div><strong>6</strong><span>大茶类</span></div>
+            <div><strong>4</strong><span>茶区</span></div>
+          </div>
+        </header>
+
+        <div class="visual-grid">
+          <aside class="left-panel">
+            <div class="section-title">茶类谱系</div>
+            <div id="teaFilters" class="tea-filters"></div>
+            <div class="section-title">四大茶区</div>
+            <div id="areaLegend" class="area-legend"></div>
+          </aside>
+
+          <section class="atlas-wrap" aria-label="圆形茶叶产地可视化地图">
+            <svg id="atlasSvg" viewBox="-620 -620 1240 1240" role="img"></svg>
+            <div id="hoverTip" class="hover-tip"></div>
+          </section>
+
+          <aside class="right-panel">
+            <div class="focus-box">
+              <span id="focusLabel">全量数据</span>
+              <strong id="focusCount">155</strong>
+              <small id="focusMeta">覆盖 18 个省级产地</small>
+            </div>
+            <div class="section-title">省份强度</div>
+            <div id="provinceList" class="province-list"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="insight-band">
+        <div class="chart-panel">
+          <h2>茶类数量结构</h2>
+          <div id="teaChart" class="chart"></div>
+        </div>
+        <div class="chart-panel">
+          <h2>茶区分布</h2>
+          <div id="areaChart" class="chart"></div>
+        </div>
+        <div class="text-panel">
+          <h2>数据观察</h2>
+          <div id="insightText" class="insight-text"></div>
+        </div>
+      </section>
+
+      <section class="explore-section">
+        <div class="section-head">
+          <h2>品种索引</h2>
+          <div class="search-row">
+            <input id="searchInput" type="search" placeholder="搜索茶名、产地、省份" />
+            <select id="areaSelect" aria-label="按茶区筛选"></select>
+          </div>
+        </div>
+        <div id="teaCards" class="tea-card-grid"></div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
