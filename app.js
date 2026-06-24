@@ -173,7 +173,15 @@ function drawAtlas() {
       r: 7 + Math.sqrt(items.length) * 2.1,
       fill: colors[topTea],
     });
-    dot.addEventListener("mousemove", (e) => showTip(e, province, `${items.length} 条记录 · ${topTea}最集中`));
+    dot.addEventListener("mousemove", (e) => showTip(e, {
+      icon: "map",
+      title: province,
+      rows: [
+        ["记录", `${items.length} 条`],
+        ["主类", topTea],
+        ["茶区", [...new Set(items.map((x) => x["四大茶区"]))].join(" / ")],
+      ],
+    }));
     dot.addEventListener("mouseleave", hideTip);
     root.appendChild(dot);
     if (items.length >= 4) {
@@ -242,18 +250,50 @@ function drawLeafMarkers(records) {
       r: state.selectedTea === "全部" ? 3.4 : 4.8,
       fill: r.color,
     });
-    marker.addEventListener("mousemove", (e) => showTip(
-      e,
-      r["品种级茶名"],
-      `${r["茶类"]} · ${r["子类"]}<br>${r["最小产地(县/镇/村)"]}<br>${r["四大茶区"]}`,
-    ));
+    marker.addEventListener("mousemove", (e) => showTip(e, {
+      icon: "tea",
+      title: r["品种级茶名"],
+      color: r.color,
+      rows: [
+        ["茶类", r["茶类"]],
+        ["子类", r["子类"]],
+        ["产地", r["最小产地(县/镇/村)"]],
+        ["茶区", r["四大茶区"]],
+      ],
+    }));
     marker.addEventListener("mouseleave", hideTip);
     rim.appendChild(marker);
   });
 }
 
-function showTip(event, title, detail) {
-  tip.innerHTML = `<strong>${title}</strong><span>${detail}</span>`;
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function showTip(event, payload, legacyDetail) {
+  const data = typeof payload === "string"
+    ? { title: payload, rows: [["信息", legacyDetail || ""]] }
+    : payload;
+  const icon = data.icon === "map" ? "⌖" : "茶";
+  const color = data.color || "#3da99b";
+  tip.innerHTML = `
+    <div class="tip-head">
+      <i style="background:${color}">${icon}</i>
+      <strong>${escapeHtml(data.title)}</strong>
+    </div>
+    <div class="tip-rows">
+      ${(data.rows || []).map(([label, value]) => `
+        <div>
+          <span>${escapeHtml(label)}</span>
+          <b>${escapeHtml(value)}</b>
+        </div>
+      `).join("")}
+    </div>
+  `;
   const box = event.currentTarget.closest(".atlas-wrap").getBoundingClientRect();
   tip.style.left = `${event.clientX - box.left}px`;
   tip.style.top = `${event.clientY - box.top}px`;
